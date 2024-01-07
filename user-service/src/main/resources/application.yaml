@@ -5,8 +5,12 @@ spring:
   data:
     rest:
       basePath: /
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          jwk-set-uri: ${KEYCLOAK_REALM_CERT_URL:http://localhost:8080/auth/realms/shop/protocol/openid-connect/certs}
+
+keycloak:
+  realm: shop
+  auth-server-url: http://localhost:8080/auth
+  resource: shop-app
+  credentials:
+    secret: hiOfyA97ur2AatrfK55XJ5a3WyubdB5t
+  use-resource-role-mappings: true
+  bearer-only: true

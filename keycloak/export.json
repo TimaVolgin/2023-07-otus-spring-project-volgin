@@ -258,6 +258,13 @@
         "containerId" : "bb6dcebb-a3e8-49f8-b972-c3704d11839f",
         "attributes" : { }
       }, {
+        "id" : "9cba125d-f155-4058-9c12-351c9c603ddc",
+        "name" : "uma_protection",
+        "composite" : false,
+        "clientRole" : true,
+        "containerId" : "bb6dcebb-a3e8-49f8-b972-c3704d11839f",
+        "attributes" : { }
+      }, {
         "id" : "b558215f-448a-49ff-9db8-49cff809641b",
         "name" : "ADMIN",
         "composite" : false,
@@ -369,7 +376,9 @@
     "path" : "/editors",
     "attributes" : { },
     "realmRoles" : [ ],
-    "clientRoles" : { },
+    "clientRoles" : {
+      "shop-app" : [ "EDITOR" ]
+    },
     "subGroups" : [ ]
   }, {
     "id" : "a2af7c21-aec9-4713-bd3f-3af2585b1260",
@@ -377,7 +386,9 @@
     "path" : "/users",
     "attributes" : { },
     "realmRoles" : [ ],
-    "clientRoles" : { },
+    "clientRoles" : {
+      "shop-app" : [ "USER" ]
+    },
     "subGroups" : [ ]
   }, {
     "id" : "ec9af33f-101c-4c76-822f-67b6a2fe642a",
@@ -385,7 +396,9 @@
     "path" : "/viewers",
     "attributes" : { },
     "realmRoles" : [ ],
-    "clientRoles" : { },
+    "clientRoles" : {
+      "shop-app" : [ "VIEWER" ]
+    },
     "subGroups" : [ ]
   } ],
   "defaultRole" : {
@@ -474,7 +487,10 @@
     "credentials" : [ ],
     "disableableCredentialTypes" : [ ],
     "requiredActions" : [ ],
-    "realmRoles" : [ "default-roles-shop" ],
+    "realmRoles" : [ "default-roles-shop", "uma_authorization" ],
+    "clientRoles" : {
+      "realm-management" : [ "query-users", "query-groups", "view-users", "manage-users" ]
+    },
     "notBefore" : 0,
     "groups" : [ ]
   }, {
@@ -747,6 +763,7 @@
     "implicitFlowEnabled" : false,
     "directAccessGrantsEnabled" : true,
     "serviceAccountsEnabled" : true,
+    "authorizationServicesEnabled" : true,
     "publicClient" : false,
     "frontchannelLogout" : false,
     "protocol" : "openid-connect",
@@ -756,13 +773,13 @@
       "saml.force.post.binding" : "false",
       "saml.multivalued.roles" : "false",
       "saml.encrypt" : "false",
-      "oauth2.device.authorization.grant.enabled" : "false",
+      "oauth2.device.authorization.grant.enabled" : "true",
       "backchannel.logout.revoke.offline.tokens" : "false",
       "saml.server.signature" : "false",
       "saml.server.signature.keyinfo.ext" : "false",
       "use.refresh.tokens" : "true",
       "exclude.session.state.from.auth.response" : "false",
-      "oidc.ciba.grant.enabled" : "false",
+      "oidc.ciba.grant.enabled" : "true",
       "saml.artifact.binding" : "false",
       "backchannel.logout.session.required" : "true",
       "client_credentials.use_refresh_token" : "false",
@@ -818,7 +835,43 @@
       }
     } ],
     "defaultClientScopes" : [ "web-origins", "profile", "roles", "email" ],
-    "optionalClientScopes" : [ "address", "phone", "offline_access", "microprofile-jwt" ]
+    "optionalClientScopes" : [ "address", "phone", "offline_access", "microprofile-jwt" ],
+    "authorizationSettings" : {
+      "allowRemoteResourceManagement" : true,
+      "policyEnforcementMode" : "ENFORCING",
+      "resources" : [ {
+        "name" : "Default Resource",
+        "type" : "urn:shop-app:resources:default",
+        "ownerManagedAccess" : false,
+        "attributes" : { },
+        "_id" : "25fb8560-22e0-4cb3-8d5e-1c3f819e0bc5",
+        "uris" : [ "/*" ]
+      } ],
+      "policies" : [ {
+        "id" : "ab20028d-4f3f-4269-9518-603190e386ed",
+        "name" : "Default Policy",
+        "description" : "A policy that grants access only for users within this realm",
+        "type" : "js",
+        "logic" : "POSITIVE",
+        "decisionStrategy" : "AFFIRMATIVE",
+        "config" : {
+          "code" : "// by default, grants any permission associated with this policy\n$evaluation.grant();\n"
+        }
+      }, {
+        "id" : "f3b4eb77-7de0-4ad5-acc6-37bd848e5ad3",
+        "name" : "Default Permission",
+        "description" : "A permission that applies to the default resource type",
+        "type" : "resource",
+        "logic" : "POSITIVE",
+        "decisionStrategy" : "UNANIMOUS",
+        "config" : {
+          "defaultResourceType" : "urn:shop-app:resources:default",
+          "applyPolicies" : "[\"Default Policy\"]"
+        }
+      } ],
+      "scopes" : [ ],
+      "decisionStrategy" : "UNANIMOUS"
+    }
   } ],
   "clientScopes" : [ {
     "id" : "ae98782b-c33f-4797-9f89-d93c62efd7a5",
@@ -1977,6 +2030,7 @@
     "clientOfflineSessionMaxLifespan" : "0",
     "oauth2DevicePollingInterval" : "5",
     "clientSessionIdleTimeout" : "0",
+    "userProfileEnabled" : "false",
     "parRequestUriLifespan" : "60",
     "clientSessionMaxLifespan" : "0",
     "clientOfflineSessionIdleTimeout" : "0",

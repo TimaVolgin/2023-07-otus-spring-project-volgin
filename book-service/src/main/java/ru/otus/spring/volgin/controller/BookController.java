@@ -7,15 +7,15 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 /**
- * Контроллер для работы с пользователями
+ * Контроллер для работы с книгами
  */
 @RestController
 @SecurityRequirement(name = "bearerAuth")
-public class UserController {
+public class BookController {
 
-    @GetMapping("/users")
-    public List<String> getUsers() {
+    @GetMapping("/books")
+    public List<String> getBooks() {
         // TODO
-        return List.of("user1", "user1");
+        return List.of("book1", "book1");
     }
 }
