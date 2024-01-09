@@ -1,32 +1,41 @@
 package ru.otus.spring.volgin.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.keycloak.representations.AccessTokenResponse;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import ru.otus.spring.volgin.dto.CredentialsDto;
+import ru.otus.spring.volgin.entity.dto.CreateUserRequest;
+import ru.otus.spring.volgin.entity.dto.CredentialsRequest;
+import ru.otus.spring.volgin.entity.dto.TokenInfoResponse;
+import ru.otus.spring.volgin.service.KeycloakAdminService;
 import ru.otus.spring.volgin.service.KeycloakAuthorizationService;
+
+import javax.validation.Valid;
 
 /**
  * Контроллер для работы с авторизацией
  */
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/users")
 @RequiredArgsConstructor
 public class AuthorizationController {
 
     /** Сервис авторизации пользователя в Keycloak */
     public final KeycloakAuthorizationService keycloakAuthorizationService;
+    /** Сервис по работе с API администратора Keycloak */
+    private final KeycloakAdminService keycloakAdminService;
 
     /**
      * Возвращает токен
-     * @param credentialsDto реквизиты для получения токена
+     * @param credentialsRequest реквизиты для получения токена
      * @return токен
      */
-    @GetMapping("/token")
-    public AccessTokenResponse getToken(CredentialsDto credentialsDto) {
-        return keycloakAuthorizationService.getToken(credentialsDto);
+    @PostMapping("/token")
+    public TokenInfoResponse getToken(@RequestBody @Valid CredentialsRequest credentialsRequest) {
+        return keycloakAuthorizationService.getToken(credentialsRequest.getLogin(), credentialsRequest.getPassword());
     }
 
     /**
@@ -34,8 +43,19 @@ public class AuthorizationController {
      * @param refreshToken токен для получения нового токена
      * @return токен
      */
-    @GetMapping("/refresh")
-    public AccessTokenResponse refreshToken(String refreshToken) {
+    @PostMapping("/refreshToken")
+    public TokenInfoResponse refreshToken(@RequestBody String refreshToken) {
         return keycloakAuthorizationService.refreshToken(refreshToken);
+    }
+
+    /**
+     * Регистрирует пользователя
+     * @param createUserRequest регистрирует пользователя
+     * @return токен
+     */
+    @PostMapping(value = "/createUser")
+    @ResponseStatus(HttpStatus.CREATED)
+    public TokenInfoResponse createUser(@RequestBody @Valid CreateUserRequest createUserRequest) {
+        return keycloakAdminService.createUser(createUserRequest);
     }
 }

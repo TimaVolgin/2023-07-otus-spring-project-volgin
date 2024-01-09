@@ -1,7 +1,6 @@
 package ru.otus.spring.volgin.service;
 
-import org.keycloak.representations.AccessTokenResponse;
-import ru.otus.spring.volgin.dto.CredentialsDto;
+import ru.otus.spring.volgin.entity.dto.TokenInfoResponse;
 
 /**
  * Интерфейс авторизации пользователя в Keycloak
@@ -10,15 +9,16 @@ public interface KeycloakAuthorizationService {
 
     /**
      * Возвращает токен
-     * @param credentialsDto реквизиты пользователя
+     * @param login    логин пользователя
+     * @param password пароль пользователя
      * @return токен
      */
-    AccessTokenResponse getToken(CredentialsDto credentialsDto);
+    TokenInfoResponse getToken(String login, String password);
 
     /**
      * Возвращает токен на основе refresh Токена
      * @param refreshToken токен для получения нового токена
      * @return токен
      */
-    AccessTokenResponse refreshToken(String refreshToken);
+    TokenInfoResponse refreshToken(String refreshToken);
 }

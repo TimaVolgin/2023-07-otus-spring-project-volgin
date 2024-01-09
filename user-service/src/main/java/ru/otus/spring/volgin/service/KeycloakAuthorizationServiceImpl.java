@@ -6,8 +6,10 @@ import org.keycloak.authorization.client.AuthzClient;
 import org.keycloak.authorization.client.Configuration;
 import org.keycloak.authorization.client.util.Http;
 import org.keycloak.representations.AccessTokenResponse;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.stereotype.Service;
-import ru.otus.spring.volgin.dto.CredentialsDto;
+import ru.otus.spring.volgin.entity.dto.TokenInfoResponse;
+import ru.otus.spring.volgin.mapper.KeycloakMapper;
 
 /**
  * Сервис авторизации пользователя в Keycloak
@@ -22,21 +24,27 @@ public class KeycloakAuthorizationServiceImpl implements KeycloakAuthorizationSe
     private final Configuration kcConfig;
     /** Свойства keycloak */
     private final KeycloakSpringBootProperties kcProperties;
+    /** Конвертер keycloak объектов в DTO */
+    private final KeycloakMapper keycloakMapper;
 
     @Override
-    public AccessTokenResponse getToken(CredentialsDto credentialsDto) {
-        return authzClient.authorization(credentialsDto.getLogin(), credentialsDto.getPassword())
-                .authorize();
+    public TokenInfoResponse getToken(String login, String password) {
+        try {
+            return keycloakMapper.tokenToDto(authzClient.authorization(login, password)
+                    .authorize());
+        } catch (Exception e) {
+            throw new AuthenticationServiceException("Не удалось авторизоваться, попробуйте ещё раз", e);
+        }
     }
 
     @Override
-    public AccessTokenResponse refreshToken(String refreshToken) {
+    public TokenInfoResponse refreshToken(String refreshToken) {
         String url = kcProperties.getAuthServerUrl() + "/realms/" + kcProperties.getRealm() + "/protocol/openid-connect/token";
         String clientId = kcProperties.getResource();
         String secret = (String) kcProperties.getCredentials().get("secret");
         Http http = new Http(kcConfig, (params, headers) -> {});
 
-        return http.<AccessTokenResponse>post(url)
+        var tokenResponse =  http.<AccessTokenResponse>post(url)
                 .authentication()
                 .client()
                 .form()
@@ -47,5 +55,6 @@ public class KeycloakAuthorizationServiceImpl implements KeycloakAuthorizationSe
                 .response()
                 .json(AccessTokenResponse.class)
                 .execute();
+        return keycloakMapper.tokenToDto(tokenResponse);
     }
 }

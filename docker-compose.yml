@@ -36,5 +36,24 @@ services:
     networks:
       - local-keycloak
 
+  app:
+    build:
+      context: ./user-service
+      dockerfile: Dockerfile
+    image: volginta/user-service
+    container_name: user-service
+    privileged: true
+    depends_on:
+      - keycloak
+    environment:
+      KC_URL: http://keycloak:8080/auth
+      KC_REALM: shop
+      KC_CLIENT_ID: shop-app
+      KC_SECRET: hiOfyA97ur2AatrfK55XJ5a3WyubdB5t
+    ports:
+      - "8081:8081"
+    networks:
+      - local-keycloak
+
 networks:
   local-keycloak:
