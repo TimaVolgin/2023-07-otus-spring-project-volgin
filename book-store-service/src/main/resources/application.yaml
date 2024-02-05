@@ -1,0 +1,33 @@
+server:
+  port: 8082
+
+spring:
+  application:
+    name: book-store-service
+  profiles:
+    active: ${book_store.project.profile:prod}
+  datasource:
+    url: ${book_store.db.url:jdbc:postgresql://localhost:5435/book_store}
+    username: ${book_store.db.username:postgres}
+    password: ${book_store.db.password:postgres}
+    driver-class-name: org.postgresql.Driver
+  liquibase:
+    change-log: classpath:liquibase/main.xml
+    contexts: prod
+    drop-first: false
+  jpa:
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+    generate-ddl: false
+    hibernate:
+      ddl-auto: none
+  data:
+    rest:
+      basePath: /
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: ${book_store.keycloak.cert:http://localhost:8080/auth/realms/shop/protocol/openid-connect/certs}

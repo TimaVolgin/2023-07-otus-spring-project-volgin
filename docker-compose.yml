@@ -9,10 +9,6 @@ services:
       POSTGRES_DB: keycloak
       POSTGRES_USER: keycloak
       POSTGRES_PASSWORD: keycloak
-    ports:
-      - "127.0.0.1:5437:5437"
-    networks:
-      - local-keycloak
 
   keycloak:
     depends_on:
@@ -30,13 +26,11 @@ services:
     volumes:
       - "./keycloak/export.json:/tmp/export.json"
     image: jboss/keycloak:16.1.1
+    restart: unless-stopped
     ports:
       - "127.0.0.1:8080:8080"
-    restart: unless-stopped
-    networks:
-      - local-keycloak
 
-  app:
+  user-service:
     build:
       context: ./user-service
       dockerfile: Dockerfile
@@ -52,8 +46,31 @@ services:
       KC_SECRET: hiOfyA97ur2AatrfK55XJ5a3WyubdB5t
     ports:
       - "8081:8081"
-    networks:
-      - local-keycloak
 
-networks:
-  local-keycloak:
+  book-store-service-db:
+    image: postgres:15.5
+    restart: unless-stopped
+    container_name: book-store-service-db
+    environment:
+      POSTGRES_DB: book_store
+      POSTGRES_USER: store
+      POSTGRES_PASSWORD: store_pass
+
+  book-store-service:
+    build:
+      context: ./book-store-service
+      dockerfile: Dockerfile
+    image: volginta/book-store-service
+    container_name: book-store-service
+    privileged: true
+    depends_on:
+      - keycloak
+      - book-store-service-db
+    environment:
+      BOOK_STORE_PROJECT_PROFILE: prod
+      BOOK_STORE_DB_URL: jdbc:postgresql://book-store-service-db:5432/book_store
+      BOOK_STORE_DB_USERNAME: store
+      BOOK_STORE_DB_PASSWORD: store_pass
+      BOOK_STORE_KEYCLOAK_CERT: http://localhost:8080/auth/realms/shop/protocol/openid-connect/certs
+    ports:
+      - "8082:8082"
