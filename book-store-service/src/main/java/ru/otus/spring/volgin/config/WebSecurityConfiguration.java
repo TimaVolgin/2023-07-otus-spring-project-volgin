@@ -64,6 +64,7 @@ public class WebSecurityConfiguration {
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return (web) -> web.ignoring()
+                .antMatchers("/actuator/health")
                 .antMatchers("/swagger-ui.html")
                 .antMatchers("/swagger-ui/**")
                 .antMatchers("/webjars/springfox-swagger-ui/**")

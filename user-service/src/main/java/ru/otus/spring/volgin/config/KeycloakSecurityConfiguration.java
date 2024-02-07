@@ -49,7 +49,9 @@ public class KeycloakSecurityConfiguration extends KeycloakWebSecurityConfigurer
 
     @Override
     public void configure(WebSecurity web) {
-        web.ignoring().antMatchers("/swagger-ui.html")
+        web.ignoring()
+                .antMatchers("/actuator/health")
+                .antMatchers("/swagger-ui.html")
                 .antMatchers("/swagger-ui/**")
                 .antMatchers("/webjars/springfox-swagger-ui/**")
                 .antMatchers("/swagger-resources/**")

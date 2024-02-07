@@ -31,3 +31,21 @@ spring:
       resourceserver:
         jwt:
           jwk-set-uri: ${book_store.keycloak.cert:http://localhost:8080/auth/realms/shop/protocol/openid-connect/certs}
+
+eureka:
+  client:
+    healthcheck:
+      enabled: true
+    service-url:
+      defaultZone: http://${eureka-service.server.hostname:127.0.0.1}:${eureka-service.server.port:8084}/eureka/
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,logfile
+  endpoint:
+    health:
+      show-details: always
+    logfile:
+      enabled: true
