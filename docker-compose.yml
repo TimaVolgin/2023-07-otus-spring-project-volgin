@@ -75,7 +75,7 @@ services:
       BOOK_STORE_DB_URL: jdbc:postgresql://book-store-service-db:5432/book_store
       BOOK_STORE_DB_USERNAME: store
       BOOK_STORE_DB_PASSWORD: store_pass
-      BOOK_STORE_KEYCLOAK_CERT: http://localhost:8080/auth/realms/shop/protocol/openid-connect/certs
+      BOOK_STORE_KEYCLOAK_CERT: http://keycloak:8080/auth/realms/shop/protocol/openid-connect/certs
       EUREKA_SERVICE_SERVER_PORT: 8084
       EUREKA_SERVICE_SERVER_HOSTNAME: eureka-service
       eureka.instance.preferIpAddress: true
