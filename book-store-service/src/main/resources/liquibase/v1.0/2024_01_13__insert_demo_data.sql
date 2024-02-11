@@ -1,6 +1,6 @@
 --liquibase formatted sql
 
---changeset VolginTA: test_data context:prod
+--changeset VolginTA: test_data context:demo
 INSERT INTO authors(id, fio, birthday)
 VALUES (1, 'Александр Сергеевич Пушкин', '1799-06-06'),
        (2, 'Михаил Юрьевич Лермонтов', '1814-10-15'),

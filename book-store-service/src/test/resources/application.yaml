@@ -1,16 +1,8 @@
-server:
-  port: 8082
-
 spring:
   application:
     name: book-store-service
-  profiles:
-    active: ${book_store.project.profile:prod}
   datasource:
-    url: ${book_store.db.url:jdbc:postgresql://localhost:5435/book_store}
-    username: ${book_store.db.username:postgres}
-    password: ${book_store.db.password:postgres}
-    driver-class-name: org.postgresql.Driver
+    url: jdbc:h2:mem:book-store-service
   liquibase:
     change-log: classpath:liquibase/main.xml
     contexts: demo
@@ -30,14 +22,14 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          jwk-set-uri: ${book_store.keycloak.cert:http://localhost:8080/auth/realms/shop/protocol/openid-connect/certs}
+          jwk-set-uri: http://localhost:8080/auth/realms/shop/protocol/openid-connect/certs
+server:
+  port: 8082
 
 eureka:
   client:
-    healthcheck:
-      enabled: true
-    service-url:
-      defaultZone: http://${eureka-service.server.hostname:127.0.0.1}:${eureka-service.server.port:8084}/eureka/
+    register-with-eureka: false
+    fetch-registry: false
 
 management:
   endpoints:
