@@ -11,7 +11,6 @@ import org.keycloak.admin.client.KeycloakBuilder;
 import org.keycloak.authorization.client.AuthzClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 
 import java.util.HashMap;
 
@@ -36,21 +35,12 @@ public class KeycloakConfiguration {
      */
     @Bean
     public AuthzClient userPasswordAuthClient() {
-        return AuthzClient.create(keycloakAuthConfiguration());
-    }
-
-    /**
-     * Возвращает конфигурацию для AuthzClient
-     * @return конфигурация для AuthzClient
-     */
-    @Bean
-    @Primary
-    public org.keycloak.authorization.client.Configuration keycloakAuthConfiguration() {
         var credentials = new HashMap<>(kcProperties.getCredentials());
         credentials.put("grant_type", "password");
-        return new org.keycloak.authorization.client.Configuration(
+        var conf = new org.keycloak.authorization.client.Configuration(
                 kcProperties.getAuthServerUrl(), kcProperties.getRealm(),
                 kcProperties.getResource(), credentials, null);
+        return AuthzClient.create(conf);
     }
 
     /**

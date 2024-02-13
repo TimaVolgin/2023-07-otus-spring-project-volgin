@@ -30,6 +30,18 @@ services:
     ports:
       - "127.0.0.1:8080:8080"
 
+  eureka-service:
+    build:
+      context: ./eureka-service
+      dockerfile: Dockerfile
+    image: volginta/eureka-service
+    container_name: eureka-service
+    privileged: true
+    environment:
+      EUREKA_SERVICE_SERVER_HOSTNAME: localhost
+    ports:
+      - "8084:8084"
+
   user-service:
     build:
       context: ./user-service
@@ -82,15 +94,3 @@ services:
       eureka.instance.ip-address: 127.0.0.1
     ports:
       - "8082:8082"
-
-  eureka-service:
-    build:
-      context: ./eureka-service
-      dockerfile: Dockerfile
-    image: belovdp/eureka-service
-    container_name: eureka-service
-    privileged: true
-    environment:
-      EUREKA_SERVICE_SERVER_HOSTNAME: localhost
-    ports:
-      - "8084:8084"

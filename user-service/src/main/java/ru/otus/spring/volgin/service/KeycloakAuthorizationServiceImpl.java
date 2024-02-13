@@ -3,7 +3,6 @@ package ru.otus.spring.volgin.service;
 import lombok.RequiredArgsConstructor;
 import org.keycloak.adapters.springboot.KeycloakSpringBootProperties;
 import org.keycloak.authorization.client.AuthzClient;
-import org.keycloak.authorization.client.Configuration;
 import org.keycloak.authorization.client.util.Http;
 import org.keycloak.representations.AccessTokenResponse;
 import org.springframework.security.authentication.AuthenticationServiceException;
@@ -20,8 +19,6 @@ public class KeycloakAuthorizationServiceImpl implements KeycloakAuthorizationSe
 
     /** Клиент для работы с авторизацией keycloak */
     private final AuthzClient authzClient;
-    /** Конфигурация keycloak */
-    private final Configuration kcConfig;
     /** Свойства keycloak */
     private final KeycloakSpringBootProperties kcProperties;
     /** Конвертер keycloak объектов в DTO */
@@ -42,7 +39,7 @@ public class KeycloakAuthorizationServiceImpl implements KeycloakAuthorizationSe
         String url = kcProperties.getAuthServerUrl() + "/realms/" + kcProperties.getRealm() + "/protocol/openid-connect/token";
         String clientId = kcProperties.getResource();
         String secret = (String) kcProperties.getCredentials().get("secret");
-        Http http = new Http(kcConfig, (params, headers) -> {});
+        Http http = new Http(authzClient.getConfiguration(), (params, headers) -> {});
 
         var tokenResponse =  http.<AccessTokenResponse>post(url)
                 .authentication()

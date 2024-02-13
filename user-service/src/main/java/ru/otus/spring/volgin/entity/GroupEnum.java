@@ -16,5 +16,5 @@ public enum GroupEnum {
     USERS("a2af7c21-aec9-4713-bd3f-3af2585b1260");
 
     /** Фиксированный идентификатор в keycloak */
-    private final String groupId;
+    private final String id;
 }

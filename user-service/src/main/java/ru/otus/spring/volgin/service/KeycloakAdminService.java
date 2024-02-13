@@ -1,5 +1,6 @@
 package ru.otus.spring.volgin.service;
 
+import org.keycloak.representations.idm.GroupRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springdoc.core.converters.models.Pageable;
 import ru.otus.spring.volgin.entity.GroupEnum;
@@ -21,15 +22,28 @@ public interface KeycloakAdminService {
     TokenInfoResponse createUser(CreateUserRequest createUserRequest);
 
     /**
+     * Возвращает пользователя по идентификатору
+     * @param id идентификатор
+     * @return пользователь
+     */
+    UserRepresentation getUser(String id);
+
+    /**
      * Возвращает список пользователей
      */
     List<UserRepresentation> getUsers(Pageable pageable);
+
+    /**
+     * Возвращает список групп
+     * @return список групп
+     */
+    List<GroupRepresentation> getGroups();
 
     /**
      * Устанавливает группу пользователя
      * @param userId идентификатор пользователя
      * @param group группа пользователей
      */
-    void    setUserGroup(String userId, GroupEnum group);
+    void setUserGroup(String userId, GroupEnum group);
 
 }

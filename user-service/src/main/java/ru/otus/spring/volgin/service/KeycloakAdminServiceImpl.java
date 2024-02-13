@@ -1,10 +1,12 @@
 package ru.otus.spring.volgin.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.keycloak.adapters.springboot.KeycloakSpringBootProperties;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.idm.CredentialRepresentation;
+import org.keycloak.representations.idm.GroupRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springdoc.core.converters.models.Pageable;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,7 @@ import java.util.List;
 /**
  * Сервис по работе с API Keycloak
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class KeycloakAdminServiceImpl implements KeycloakAdminService {
@@ -56,10 +59,30 @@ public class KeycloakAdminServiceImpl implements KeycloakAdminService {
     }
 
     @Override
+    public UserRepresentation getUser(String id) {
+        var user = keycloak.realm(kcProperties.getRealm()).users().get(id).toRepresentation();
+        user.setGroups(keycloak.realm(kcProperties.getRealm())
+                .users()
+                .get(user.getId())
+                .groups()
+                .stream()
+                .map(GroupRepresentation::getName)
+                .toList());
+        return user;
+    }
+
+    @Override
     public List<UserRepresentation> getUsers(Pageable pageable) {
         return keycloak.realm(kcProperties.getRealm())
                 .users()
                 .list(pageable.getPage() * pageable.getSize(), pageable.getSize());
+    }
+
+    @Override
+    public List<GroupRepresentation> getGroups() {
+        return keycloak.realm(kcProperties.getRealm())
+                .groups()
+                .groups();
     }
 
     @Override
@@ -69,7 +92,7 @@ public class KeycloakAdminServiceImpl implements KeycloakAdminService {
             var existGroups = usersResource.get(userId).groups();
             existGroups.forEach(g -> usersResource.get(userId)
                     .leaveGroup(g.getId()));
-            usersResource.get(userId).joinGroup(group.getGroupId());
+            usersResource.get(userId).joinGroup(group.getId());
         } catch (Exception e) {
             throw new ApplicationException("Не удалось изменить группу пользователя. Попробуйте ещё раз или обратитесь к администратору", e);
         }
