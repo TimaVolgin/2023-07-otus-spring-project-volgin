@@ -14,3 +14,26 @@
 
 Технологии:
 SpringBoot, Keycloak, Docker, Postgres, Swagger, Eureka, Zuul.
+
+----------------------------------------------------------------------------------------------------------
+### Сервис по управлению пользователями
+Все пользователи будут храниться в keycloak 16.1.1
+Пользователи могут получить токен, обновить токен, запросить список пользователей.
+Доступные роли:
+- admin - максимально доступные права
+- editor - все права, кроме изменения пользователей
+- viewer - права только на просмотр
+- user - роль для пользователей книжного магазина
+
+Возможности:
+- Получить токен
+- Обновить токен
+- Создание нового пользователя
+- Получить список пользователей (admin, editor, viewer, user)
+- Изменить роль пользователя(admins, editors, viewers)
+
+----------------------------------------------------------------------------------------------------------
+### Экспорт конфигурации keycloak
+- Прописать volume: `"./keycloak/export.json:/tmp/export.json"`
+- Запустить контейнер и подключиться к нему
+- Выполнить /opt/jboss/keycloak/bin/standalone.sh -Djboss.socket.binding.port-offset=100 -Dkeycloak.migration.action=export -Dkeycloak.migration.provider=singleFile -Dkeycloak.migration.realmName=shop -Dkeycloak.migration.usersExportStrategy=REALM_FILE -Dkeycloak.migration.file=/tmp/export.json

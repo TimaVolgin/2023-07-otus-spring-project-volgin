@@ -1,0 +1,42 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: user-service
+  data:
+    rest:
+      basePath: /
+
+keycloak:
+  realm: ${kc.realm:shop}
+  auth-server-url: ${kc.url:http://localhost:8080/auth}
+  resource: ${kc.client_id:shop-app}
+  credentials:
+    secret: ${kc.secret:hiOfyA97ur2AatrfK55XJ5a3WyubdB5t}
+  use-resource-role-mappings: true
+  bearer-only: true
+
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG
+
+eureka:
+  client:
+    healthcheck:
+      enabled: true
+    service-url:
+      defaultZone: http://${eureka-service.server.hostname:localhost}:${eureka-service.server.port:8084}/eureka/
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,logfile
+  endpoint:
+    health:
+      show-details: always
+    logfile:
+      enabled: true
