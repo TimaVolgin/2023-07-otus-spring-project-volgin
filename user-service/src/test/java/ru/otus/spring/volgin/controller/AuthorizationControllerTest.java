@@ -17,7 +17,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@DisplayName("Тестирует публичную работу с keycloak")
+@DisplayName("Тестирует работу авторизации в keycloak")
 @AutoConfigureMockMvc
 class AuthorizationControllerTest extends KeycloakBaseTest {
 

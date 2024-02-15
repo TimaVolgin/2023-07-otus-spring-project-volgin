@@ -1,0 +1,69 @@
+server:
+  port: 8085
+
+spring:
+  application:
+    name: order-service
+  profiles:
+    active: ${orders.project.profile:prod}
+  datasource:
+    url: ${orders.db.url:jdbc:postgresql://localhost:5435/order_service}
+    username: ${orders.db.username:postgres}
+    password: ${orders.db.password:postgres}
+    driver-class-name: org.postgresql.Driver
+  liquibase:
+    change-log: classpath:liquibase/main.xml
+    contexts: demo
+    drop-first: false
+  jpa:
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+    generate-ddl: false
+    hibernate:
+      ddl-auto: none
+  data:
+    rest:
+      basePath: /
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: ${orders.keycloak.cert:http://localhost:8080/auth/realms/shop/protocol/openid-connect/certs}
+
+eureka:
+  client:
+    healthcheck:
+      enabled: true
+    service-url:
+      defaultZone: http://${eureka-service.server.hostname:localhost}:${eureka-service.server.port:8084}/eureka/
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,logfile
+  endpoint:
+    health:
+      show-details: always
+    logfile:
+      enabled: true
+
+feign:
+  circuitbreaker:
+    enabled: true
+
+---
+spring:
+  config:
+    activate:
+      on-profile: demo
+  liquibase:
+    contexts: demo
+    drop-first: true
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: false

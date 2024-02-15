@@ -1,0 +1,48 @@
+server:
+  port: 8085
+
+spring:
+  application:
+    name: order-service
+  datasource:
+    url: jdbc:h2:mem:order-service
+  liquibase:
+    change-log: classpath:liquibase/main.xml
+    contexts: demo
+    drop-first: false
+  jpa:
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+    generate-ddl: false
+    hibernate:
+      ddl-auto: none
+  data:
+    rest:
+      basePath: /
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: http://localhost:8080/auth/realms/shop/protocol/openid-connect/certs
+
+eureka:
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,logfile
+  endpoint:
+    health:
+      show-details: always
+    logfile:
+      enabled: true
+
+feign:
+  circuitbreaker:
+    enabled: true

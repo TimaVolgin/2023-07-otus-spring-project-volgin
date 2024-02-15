@@ -94,3 +94,35 @@ services:
       eureka.instance.ip-address: 127.0.0.1
     ports:
       - "8082:8082"
+
+  order-service-db:
+    image: postgres:13.2
+    restart: unless-stopped
+    container_name: order-service-db
+    environment:
+      POSTGRES_DB: order_service
+      POSTGRES_USER: order
+      POSTGRES_PASSWORD: order_pass
+
+  order-service:
+    build:
+      context: ./order-service
+      dockerfile: Dockerfile
+    image: volginta/order-service
+    container_name: order-service
+    privileged: true
+    depends_on:
+      - keycloak
+      - order-service-db
+      - eureka-service
+    environment:
+      ORDERS_PROJECT_PROFILE: $PRODUCTS_PROJECT_PROFILE
+      ORDERS_DB_URL: jdbc:postgresql://order-service-db:5432/order_service
+      ORDERS_DB_USERNAME: order
+      ORDERS_DB_PASSWORD: order_pass
+      ORDERS_KEYCLOAK_CERT: http://keycloak:8080/auth/realms/shop/protocol/openid-connect/certs
+      EUREKA_SERVICE_SERVER_HOSTNAME: eureka-service
+      eureka.instance.preferIpAddress: true
+      eureka.instance.ip-address: 127.0.0.1
+    ports:
+      - "8085:8085"

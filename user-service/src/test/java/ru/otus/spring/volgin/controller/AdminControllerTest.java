@@ -20,7 +20,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@DisplayName("Тестирует работу с keycloak для администратора")
+@DisplayName("Тестирует работу администратора с keycloak")
 @AutoConfigureMockMvc
 class AdminControllerTest extends KeycloakBaseTest {
 
